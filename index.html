@@ -1,0 +1,2750 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Attendance Management System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --bg: #f0f2f8;
+        --bg2: #3730a3;
+        --surface: #ffffff;
+        --card: #ffffff;
+        --card2: #f8f9fd;
+        --border: rgba(55, 48, 163, 0.12);
+        --border2: rgba(55, 48, 163, 0.22);
+        --text: #1e1b4b;
+        --muted: #6b7280;
+        --muted2: #4b5563;
+        --accent: #4f46e5;
+        --accentL: #818cf8;
+        --green: #059669;
+        --greenD: #047857;
+        --yellow: #d97706;
+        --red: #dc2626;
+        --purple: #7c3aed;
+        --pink: #db2777;
+        --teal: #0891b2;
+        --font: "DM Sans", sans-serif;
+        --mono: "DM Mono", monospace;
+        --r-sm: 8px;
+        --r-md: 12px;
+        --r-lg: 16px;
+        --r-xl: 20px;
+        --sidebar: 220px;
+      }
+
+      body {
+        font-family: var(--font);
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        display: flex;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      ::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(55, 48, 163, 0.25);
+        border-radius: 4px;
+      }
+
+      /* ── SIDEBAR ── */
+      #sidebar {
+        width: var(--sidebar);
+        flex-shrink: 0;
+        background: #3730a3;
+        border-right: none;
+        display: flex;
+        flex-direction: column;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+      }
+
+      .logo {
+        padding: 22px 18px 16px;
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        margin-bottom: 10px;
+      }
+      .logo-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: var(--r-sm);
+        background: rgba(255, 255, 255, 0.18);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+      }
+      .logo-name {
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: -0.2px;
+        color: #fff;
+      }
+      .logo-sub {
+        font-size: 10px;
+        color: rgba(255, 255, 255, 0.55);
+        letter-spacing: 0.3px;
+      }
+
+      nav {
+        padding: 4px 10px;
+        flex: 1;
+      }
+
+      .nav-section {
+        font-size: 9px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.4);
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        padding: 12px 8px 4px;
+      }
+
+      .nav-btn {
+        width: 100%;
+        padding: 9px 10px;
+        border-radius: var(--r-md);
+        margin-bottom: 1px;
+        background: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 0.65);
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-weight: 500;
+        font-size: 13px;
+        cursor: pointer;
+        text-align: left;
+        transition: all 0.15s;
+        font-family: var(--font);
+        position: relative;
+      }
+      .nav-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+      }
+      .nav-btn.active {
+        background: rgba(255, 255, 255, 0.18);
+        color: #fff;
+        font-weight: 600;
+      }
+      .nav-btn.active::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 20%;
+        bottom: 20%;
+        width: 3px;
+        background: #a5b4fc;
+        border-radius: 0 3px 3px 0;
+      }
+      .nav-icon {
+        font-size: 15px;
+        width: 18px;
+        text-align: center;
+      }
+
+      .sidebar-bottom {
+        padding: 14px 14px 16px;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+      }
+      .sidebar-info {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.55);
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .sidebar-info::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #6ee7b7;
+        flex-shrink: 0;
+      }
+      .reset-btn {
+        width: 100%;
+        padding: 8px;
+        border-radius: var(--r-sm);
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 11px;
+        cursor: pointer;
+        font-family: var(--font);
+        transition: all 0.15s;
+      }
+      .reset-btn:hover {
+        background: rgba(255, 255, 255, 0.18);
+        color: #fff;
+      }
+
+      /* ── MAIN ── */
+      #main {
+        flex: 1;
+        padding: 32px 36px;
+        overflow-x: hidden;
+        min-width: 0;
+      }
+
+      /* ── PAGE ── */
+      .page {
+        display: none;
+        animation: fadeIn 0.2s ease;
+      }
+      .page.active {
+        display: block;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      /* ── TYPOGRAPHY ── */
+      h1 {
+        font-size: 22px;
+        font-weight: 600;
+        color: var(--text);
+        margin: 0 0 3px;
+        letter-spacing: -0.4px;
+      }
+      .subtitle {
+        color: var(--muted);
+        font-size: 13px;
+        margin: 0;
+      }
+
+      /* ── CARDS ── */
+      .card {
+        background: #fff;
+        border-radius: var(--r-lg);
+        border: 1px solid rgba(55, 48, 163, 0.1);
+        padding: 20px 22px;
+        box-shadow: 0 1px 3px rgba(55, 48, 163, 0.06);
+      }
+      .card-elevated {
+        background: #f8f7ff;
+        border-radius: var(--r-lg);
+        border: 1px solid rgba(55, 48, 163, 0.14);
+        padding: 20px 22px;
+      }
+
+      /* ── STAT ── */
+      .stat {
+        border-radius: var(--r-lg);
+        padding: 18px 20px;
+        flex: 1;
+        min-width: 130px;
+        position: relative;
+        overflow: hidden;
+        transition:
+          transform 0.15s,
+          box-shadow 0.15s;
+      }
+      .stat:hover {
+        transform: translateY(-1px);
+      }
+      .stat-glow {
+        display: none;
+      }
+      .stat-label {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 8px;
+        opacity: 0.75;
+      }
+      .stat-value {
+        font-size: 28px;
+        font-weight: 600;
+        line-height: 1;
+        letter-spacing: -1px;
+      }
+      .stat-sub {
+        font-size: 11px;
+        margin-top: 5px;
+        opacity: 0.65;
+      }
+      .stat-icon {
+        font-size: 20px;
+        position: absolute;
+        top: 18px;
+        right: 18px;
+        opacity: 0.5;
+      }
+      .stat-trend {
+        font-size: 10px;
+        margin-top: 6px;
+        display: flex;
+        align-items: center;
+        gap: 3px;
+      }
+
+      /* ── BADGE ── */
+      .badge {
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        letter-spacing: 0.1px;
+      }
+      .badge-present {
+        background: #d1fae5;
+        color: #065f46;
+        border: 1px solid #6ee7b7;
+      }
+      .badge-late {
+        background: #fef3c7;
+        color: #92400e;
+        border: 1px solid #fcd34d;
+      }
+      .badge-absent {
+        background: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fca5a5;
+      }
+      .badge-excused {
+        background: #ede9fe;
+        color: #4c1d95;
+        border: 1px solid #c4b5fd;
+      }
+
+      /* ── PILL ── */
+      .pill {
+        padding: 2px 9px;
+        border-radius: 20px;
+        font-size: 10px;
+        font-weight: 600;
+        display: inline-block;
+        letter-spacing: 0.2px;
+      }
+
+      /* ── AVATAR ── */
+      .avatar {
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        flex-shrink: 0;
+        letter-spacing: -0.5px;
+        font-family: var(--mono);
+      }
+
+      /* ── TABLE ── */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      thead tr {
+        background: rgba(255, 255, 255, 0.02);
+      }
+      th {
+        padding: 11px 16px;
+        text-align: left;
+        font-size: 10px;
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        border-bottom: 1px solid var(--border);
+      }
+      td {
+        padding: 13px 16px;
+      }
+      tbody tr {
+        border-bottom: 1px solid var(--border);
+        transition: background 0.15s;
+      }
+      tbody tr:last-child {
+        border-bottom: none;
+      }
+      tbody tr:hover {
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      /* ── INPUTS ── */
+      .field-label {
+        font-size: 11px;
+        color: var(--muted2);
+        font-weight: 600;
+        margin-bottom: 6px;
+        letter-spacing: 0.2px;
+      }
+      .field-label .req {
+        color: var(--red);
+      }
+      input[type="text"],
+      input[type="number"],
+      input[type="date"],
+      input[type="time"],
+      input[type="email"],
+      select,
+      textarea {
+        width: 100%;
+        padding: 9px 13px;
+        border-radius: var(--r-sm);
+        background: var(--surface);
+        border: 1px solid var(--border2);
+        color: var(--text);
+        font-size: 13px;
+        outline: none;
+        font-family: var(--font);
+        transition: border-color 0.15s;
+      }
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: rgba(91, 141, 238, 0.5);
+      }
+      input::placeholder {
+        color: var(--muted);
+      }
+      select option {
+        background: var(--surface);
+      }
+
+      /* ── BUTTONS ── */
+      .btn {
+        padding: 9px 20px;
+        border-radius: var(--r-sm);
+        border: none;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-family: var(--font);
+        transition: all 0.15s;
+        letter-spacing: -0.1px;
+      }
+      .btn-accent {
+        background: var(--accent);
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(91, 141, 238, 0.3);
+      }
+      .btn-accent:hover {
+        background: var(--accentL);
+        box-shadow: 0 6px 16px rgba(91, 141, 238, 0.4);
+      }
+      .btn-purple {
+        background: var(--purple);
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(157, 125, 232, 0.3);
+      }
+      .btn-green {
+        background: var(--green);
+        color: #0c1a12;
+        box-shadow: 0 4px 12px rgba(62, 207, 142, 0.3);
+      }
+      .btn-yellow {
+        background: var(--yellow);
+        color: #1a1200;
+      }
+      .btn-ghost {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--border2);
+        color: var(--muted2);
+      }
+      .btn-ghost:hover {
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--text);
+      }
+      .btn-red-ghost {
+        background: rgba(240, 106, 106, 0.08);
+        border: 1px solid rgba(240, 106, 106, 0.2);
+        color: var(--red);
+        padding: 9px 20px;
+        border-radius: var(--r-sm);
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        font-family: var(--font);
+        transition: all 0.15s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .btn-red-ghost:hover {
+        background: rgba(240, 106, 106, 0.14);
+      }
+
+      .action-btn {
+        padding: 4px 10px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 11px;
+        font-weight: 600;
+        font-family: var(--font);
+        border: 1px solid transparent;
+        transition: all 0.12s;
+      }
+
+      /* ── MODAL ── */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.65);
+        backdrop-filter: blur(4px);
+        z-index: 9999;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+      }
+      .modal-overlay.open {
+        display: flex;
+      }
+      .modal-box {
+        background: var(--card2);
+        border-radius: var(--r-xl);
+        border: 1px solid var(--border2);
+        width: 100%;
+        max-width: 520px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 40px 100px rgba(0, 0, 0, 0.7);
+        animation: slideUp 0.2s ease;
+      }
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .modal-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .modal-title {
+        font-weight: 600;
+        font-size: 16px;
+        letter-spacing: -0.3px;
+      }
+      .modal-close {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid var(--border2);
+        color: var(--muted2);
+        font-size: 16px;
+        cursor: pointer;
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.15s;
+      }
+      .modal-close:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--text);
+      }
+      .modal-body {
+        padding: 22px 24px;
+      }
+
+      /* ── EMPTY STATE ── */
+      .empty {
+        text-align: center;
+        padding: 48px 20px;
+        color: var(--muted);
+      }
+      .empty-icon {
+        font-size: 32px;
+        margin-bottom: 12px;
+        opacity: 0.5;
+      }
+      .empty-text {
+        font-size: 13px;
+      }
+
+      /* ── GRID UTILS ── */
+      .flex {
+        display: flex;
+      }
+      .flex-wrap {
+        flex-wrap: wrap;
+      }
+      .gap-8 {
+        gap: 8px;
+      }
+      .gap-10 {
+        gap: 10px;
+      }
+      .gap-12 {
+        gap: 12px;
+      }
+      .gap-14 {
+        gap: 14px;
+      }
+      .gap-16 {
+        gap: 16px;
+      }
+      .gap-20 {
+        gap: 20px;
+      }
+      .mb-12 {
+        margin-bottom: 12px;
+      }
+      .mb-16 {
+        margin-bottom: 16px;
+      }
+      .mb-20 {
+        margin-bottom: 20px;
+      }
+      .mb-24 {
+        margin-bottom: 24px;
+      }
+      .mb-28 {
+        margin-bottom: 28px;
+      }
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .span-2 {
+        grid-column: 1 / -1;
+      }
+
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 26px;
+      }
+
+      .scan-input {
+        flex: 1;
+        padding: 10px 14px;
+        border-radius: var(--r-sm);
+        background: var(--surface);
+        border: 1.5px solid rgba(91, 141, 238, 0.3);
+        color: var(--text);
+        font-size: 13px;
+        outline: none;
+        font-family: var(--font);
+        transition: border-color 0.15s;
+      }
+      .scan-input:focus {
+        border-color: rgba(91, 141, 238, 0.6);
+      }
+
+      .progress-bar {
+        height: 5px;
+        border-radius: 3px;
+        background: rgba(255, 255, 255, 0.06);
+        overflow: hidden;
+      }
+      .progress-fill {
+        height: 100%;
+        border-radius: 3px;
+        transition: width 0.5s ease;
+      }
+
+      .section-label {
+        font-size: 10px;
+        color: var(--muted);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 12px;
+      }
+
+      .course-card {
+        background: var(--card);
+        border-radius: var(--r-lg);
+        border: 1px solid var(--border);
+        padding: 20px 22px;
+        transition: border-color 0.2s;
+      }
+      .course-card:hover {
+        border-color: var(--border2);
+      }
+
+      .scan-result {
+        margin-top: 12px;
+        padding: 12px 14px;
+        border-radius: var(--r-sm);
+        font-size: 12px;
+      }
+      .scan-success {
+        background: rgba(62, 207, 142, 0.08);
+        border: 1px solid rgba(62, 207, 142, 0.2);
+        color: var(--green);
+      }
+      .scan-warn {
+        background: rgba(245, 200, 66, 0.08);
+        border: 1px solid rgba(245, 200, 66, 0.2);
+        color: var(--yellow);
+      }
+      .scan-error {
+        background: rgba(240, 106, 106, 0.08);
+        border: 1px solid rgba(240, 106, 106, 0.2);
+        color: var(--red);
+      }
+
+      .roster-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 14px;
+        border-radius: var(--r-md);
+        border: 1px solid var(--border);
+        transition: all 0.15s;
+        margin-bottom: 5px;
+      }
+
+      .method-tab {
+        flex: 1;
+        padding: 7px 4px;
+        border-radius: var(--r-sm);
+        font-size: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s;
+        border: 1px solid var(--border2);
+        background: transparent;
+        color: var(--muted);
+        font-family: var(--font);
+      }
+      .method-tab.active {
+        border-color: var(--accent);
+        background: rgba(91, 141, 238, 0.1);
+        color: var(--accentL);
+      }
+
+      .bar-chart {
+        display: flex;
+        align-items: flex-end;
+        gap: 8px;
+        height: 110px;
+        overflow-x: auto;
+      }
+      .bar-group {
+        flex: 1;
+        min-width: 32px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: 100%;
+      }
+      .bar-stack {
+        flex: 1;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        border-radius: 4px 4px 0 0;
+        overflow: hidden;
+      }
+      .bar-date {
+        font-size: 9px;
+        color: var(--muted);
+        margin-top: 5px;
+        text-align: center;
+        font-family: var(--mono);
+      }
+
+      .chart-legend {
+        display: flex;
+        gap: 18px;
+        margin-top: 12px;
+      }
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11px;
+        color: var(--muted2);
+      }
+      .legend-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 3px;
+      }
+
+      /* stat cards grid fix */
+      .stats-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 22px;
+      }
+      .stats-grid .stat {
+        min-width: 130px;
+      }
+
+      /* Divider */
+      .divider {
+        height: 1px;
+        background: var(--border);
+        margin: 16px 0;
+      }
+
+      /* Tag */
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 8px;
+        border-radius: 6px;
+        font-size: 10px;
+        font-weight: 600;
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--muted2);
+        border: 1px solid var(--border2);
+      }
+
+      /* toast */
+      #toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        z-index: 10000;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .toast-item {
+        padding: 12px 18px;
+        border-radius: var(--r-md);
+        font-size: 13px;
+        font-weight: 500;
+        border: 1px solid;
+        animation: toastIn 0.25s ease;
+        max-width: 320px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      }
+      @keyframes toastIn {
+        from {
+          opacity: 0;
+          transform: translateX(20px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .toast-success {
+        background: rgba(62, 207, 142, 0.12);
+        border-color: rgba(62, 207, 142, 0.25);
+        color: var(--green);
+      }
+      .toast-warn {
+        background: rgba(245, 200, 66, 0.12);
+        border-color: rgba(245, 200, 66, 0.25);
+        color: var(--yellow);
+      }
+      .toast-error {
+        background: rgba(240, 106, 106, 0.12);
+        border-color: rgba(240, 106, 106, 0.25);
+        color: var(--red);
+      }
+
+      /* Search input wrapper */
+      .search-wrap {
+        position: relative;
+      }
+      .search-wrap input {
+        padding-left: 36px;
+      }
+      .search-wrap::before {
+        content: "🔍";
+        position: absolute;
+        left: 11px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 13px;
+        pointer-events: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ── SIDEBAR ── -->
+    <div id="sidebar">
+      <div class="logo">
+        <div class="logo-icon">🎓</div>
+        <div>
+          <div class="logo-name">Attendance System</div>
+        </div>
+      </div>
+      <nav id="nav"></nav>
+      <div class="sidebar-bottom">
+        <div class="sidebar-info" id="sidebar-info"></div>
+        <button class="reset-btn" onclick="resetData()">
+          ↺ Reset Demo Data
+        </button>
+      </div>
+    </div>
+
+    <!-- ── MAIN ── -->
+    <div id="main">
+      <div id="page-dashboard" class="page active"></div>
+      <div id="page-scanner" class="page"></div>
+      <div id="page-students" class="page"></div>
+      <div id="page-courses" class="page"></div>
+      <div id="page-sessions" class="page"></div>
+      <div id="page-records" class="page"></div>
+      <div id="page-reports" class="page"></div>
+    </div>
+
+    <!-- ── MODAL ── -->
+    <div class="modal-overlay" id="modal-overlay" onclick="closeModal()">
+      <div class="modal-box" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <div class="modal-title" id="modal-title"></div>
+          <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-body" id="modal-body"></div>
+      </div>
+    </div>
+
+    <!-- ── TOAST ── -->
+    <div id="toast"></div>
+
+    <script>
+      // ─── DATA ────────────────────────────────────────────────────────────────────
+      const SEED_STUDENTS = [
+        {
+          id: "S001",
+          name: "សុខ វណ្ណៈ",
+          nameEn: "Sok Vanna",
+          gender: "M",
+          phone: "012-345-678",
+          program: "IT",
+          year: 4,
+          photo: "SV",
+        },
+        {
+          id: "S002",
+          name: "ចន្ទ ស្រីពេជ្រ",
+          nameEn: "Chan Sreypeach",
+          gender: "F",
+          phone: "015-234-567",
+          program: "IT",
+          year: 4,
+          photo: "CS",
+        },
+        {
+          id: "S003",
+          name: "ហ៊ាន បញ្ញា",
+          nameEn: "Hean Panya",
+          gender: "M",
+          phone: "017-456-789",
+          program: "CS",
+          year: 3,
+          photo: "HP",
+        },
+        {
+          id: "S004",
+          name: "គីម ស្រីលក្ខណ៍",
+          nameEn: "Kim Sreylak",
+          gender: "F",
+          phone: "016-789-012",
+          program: "CS",
+          year: 3,
+          photo: "KS",
+        },
+        {
+          id: "S005",
+          name: "ណូ ដារ៉ា",
+          nameEn: "Nou Dara",
+          gender: "M",
+          phone: "011-012-345",
+          program: "IT",
+          year: 4,
+          photo: "ND",
+        },
+        {
+          id: "S006",
+          name: "ចាន់ ដារ៉ា",
+          nameEn: "Chan Dara",
+          gender: "M",
+          phone: "013-567-890",
+          program: "BA",
+          year: 2,
+          photo: "CD",
+        },
+        {
+          id: "S007",
+          name: "លីម ណារ៉ា",
+          nameEn: "Lim Nara",
+          gender: "F",
+          phone: "098-123-456",
+          program: "BA",
+          year: 2,
+          photo: "LN",
+        },
+        {
+          id: "S008",
+          name: "ប៉ូ មករា",
+          nameEn: "Po Makara",
+          gender: "M",
+          phone: "099-234-567",
+          program: "IT",
+          year: 4,
+          photo: "PM",
+        },
+      ];
+      const SEED_COURSES = [
+        {
+          id: "C001",
+          code: "IT401",
+          name: "Web Development",
+          nameKh: "ការអភិវឌ្ឍន៍គេហទំព័រ",
+          credits: 3,
+          program: "IT",
+          instructor: "លោក ឈីម ប៊ុនថន",
+        },
+        {
+          id: "C002",
+          code: "IT402",
+          name: "Database Systems",
+          nameKh: "ប្រព័ន្ធទិន្នន័យ",
+          credits: 3,
+          program: "IT",
+          instructor: "លោកស្រី ហ្វោ រ៉ាណី",
+        },
+        {
+          id: "C003",
+          code: "CS301",
+          name: "Algorithms",
+          nameKh: "ក្បួនដោះស្រាយ",
+          credits: 3,
+          program: "CS",
+          instructor: "លោក ប្រាក់ ចាន់ថា",
+        },
+        {
+          id: "C004",
+          code: "BA201",
+          name: "Business Management",
+          nameKh: "ការគ្រប់គ្រងអាជីវកម្ម",
+          credits: 3,
+          program: "BA",
+          instructor: "លោកស្រី ខេង សុភ័ព្ទ",
+        },
+      ];
+      const SEED_SESSIONS = [
+        {
+          id: "SS001",
+          courseId: "C001",
+          date: "2025-01-20",
+          startTime: "08:00",
+          endTime: "10:00",
+          room: "Room 201",
+          lateAfter: 15,
+        },
+        {
+          id: "SS002",
+          courseId: "C001",
+          date: "2025-01-22",
+          startTime: "08:00",
+          endTime: "10:00",
+          room: "Room 201",
+          lateAfter: 15,
+        },
+        {
+          id: "SS003",
+          courseId: "C002",
+          date: "2025-01-20",
+          startTime: "10:00",
+          endTime: "12:00",
+          room: "Room 305",
+          lateAfter: 10,
+        },
+        {
+          id: "SS004",
+          courseId: "C003",
+          date: "2025-01-21",
+          startTime: "13:00",
+          endTime: "15:00",
+          room: "Lab A",
+          lateAfter: 10,
+        },
+        {
+          id: "SS005",
+          courseId: "C004",
+          date: "2025-01-23",
+          startTime: "15:00",
+          endTime: "17:00",
+          room: "Room 102",
+          lateAfter: 20,
+        },
+      ];
+      const SEED_RECORDS = [
+        {
+          id: "R001",
+          sessionId: "SS001",
+          studentId: "S001",
+          time: "07:58",
+          status: "present",
+          method: "RFID",
+          note: "",
+        },
+        {
+          id: "R002",
+          sessionId: "SS001",
+          studentId: "S002",
+          time: "08:02",
+          status: "present",
+          method: "QR",
+          note: "",
+        },
+        {
+          id: "R003",
+          sessionId: "SS001",
+          studentId: "S003",
+          time: "08:19",
+          status: "late",
+          method: "Face",
+          note: "",
+        },
+        {
+          id: "R004",
+          sessionId: "SS001",
+          studentId: "S005",
+          time: "08:01",
+          status: "present",
+          method: "RFID",
+          note: "",
+        },
+        {
+          id: "R005",
+          sessionId: "SS001",
+          studentId: "S008",
+          time: "08:04",
+          status: "present",
+          method: "Manual",
+          note: "",
+        },
+        {
+          id: "R006",
+          sessionId: "SS002",
+          studentId: "S001",
+          time: "07:55",
+          status: "present",
+          method: "RFID",
+          note: "",
+        },
+        {
+          id: "R007",
+          sessionId: "SS002",
+          studentId: "S002",
+          time: "08:18",
+          status: "late",
+          method: "QR",
+          note: "",
+        },
+        {
+          id: "R008",
+          sessionId: "SS002",
+          studentId: "S005",
+          time: "08:00",
+          status: "present",
+          method: "RFID",
+          note: "",
+        },
+        {
+          id: "R009",
+          sessionId: "SS003",
+          studentId: "S001",
+          time: "10:05",
+          status: "present",
+          method: "RFID",
+          note: "",
+        },
+        {
+          id: "R010",
+          sessionId: "SS003",
+          studentId: "S002",
+          time: "10:12",
+          status: "late",
+          method: "Manual",
+          note: "",
+        },
+        {
+          id: "R011",
+          sessionId: "SS004",
+          studentId: "S003",
+          time: "13:02",
+          status: "present",
+          method: "QR",
+          note: "",
+        },
+        {
+          id: "R012",
+          sessionId: "SS004",
+          studentId: "S004",
+          time: "13:25",
+          status: "late",
+          method: "Face",
+          note: "",
+        },
+        {
+          id: "R013",
+          sessionId: "SS005",
+          studentId: "S006",
+          time: "15:00",
+          status: "present",
+          method: "RFID",
+          note: "",
+        },
+        {
+          id: "R014",
+          sessionId: "SS005",
+          studentId: "S007",
+          time: "15:35",
+          status: "late",
+          method: "QR",
+          note: "",
+        },
+      ];
+
+      // ─── STATE ──────────────────────────────────────────────────────────────────
+      let students = JSON.parse(JSON.stringify(SEED_STUDENTS));
+      let courses = JSON.parse(JSON.stringify(SEED_COURSES));
+      let sessions = JSON.parse(JSON.stringify(SEED_SESSIONS));
+      let records = JSON.parse(JSON.stringify(SEED_RECORDS));
+      let currentPage = "dashboard";
+      let scanMethod = "RFID";
+      let scannerSession = "";
+      let recentScans = [];
+
+      const STATUS_META = {
+        present: {
+          color: "#3ecf8e",
+          label: "វត្តមាន",
+          labelEn: "Present",
+          icon: "✓",
+        },
+        late: { color: "#f5c842", label: "យឺត", labelEn: "Late", icon: "⏰" },
+        absent: {
+          color: "#f06a6a",
+          label: "អវត្តមាន",
+          labelEn: "Absent",
+          icon: "✗",
+        },
+        excused: {
+          color: "#9d7de8",
+          label: "ច្បាប់",
+          labelEn: "Excused",
+          icon: "📋",
+        },
+      };
+      const METHODS = ["RFID", "QR Code", "Face ID", "Manual"];
+      const PROGRAM_COLORS = {
+        IT: "#5b8dee",
+        CS: "#3ecf8e",
+        BA: "#f5c842",
+        ENG: "#9d7de8",
+        MED: "#f06a6a",
+      };
+
+      const NAV = [
+        { id: "dashboard", icon: "⊞", label: "Dashboard", group: "Overview" },
+        { id: "scanner", icon: "◉", label: "Check-In", group: "Overview" },
+        { id: "students", icon: "◈", label: "Students", group: "Manage" },
+        { id: "courses", icon: "◐", label: "Courses", group: "Manage" },
+        { id: "sessions", icon: "◷", label: "Sessions", group: "Manage" },
+        { id: "records", icon: "◫", label: "Records", group: "Manage" },
+        { id: "reports", icon: "◭", label: "Reports", group: "Analytics" },
+      ];
+
+      // ─── HELPERS ─────────────────────────────────────────────────────────────────
+      const uid = () => Math.random().toString(36).slice(2, 9).toUpperCase();
+      const todayDate = () => new Date().toISOString().slice(0, 10);
+      const nowTime = () => new Date().toTimeString().slice(0, 5);
+      const fmt = (d) =>
+        new Date(d + "T00:00:00").toLocaleDateString("en-US", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        });
+      const esc = (s) =>
+        String(s)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+
+      function avatar(initials, color = "#5b8dee", size = 36) {
+        const bg = color + "1e";
+        const border = color + "40";
+        const fs = Math.round(size * 0.32);
+        return `<div class="avatar" style="width:${size}px;height:${size}px;font-size:${fs}px;color:${color};background:${bg};border:1.5px solid ${border};">${esc(initials)}</div>`;
+      }
+
+      function badge(status) {
+        const m = STATUS_META[status] || STATUS_META.absent;
+        return `<span class="badge badge-${status}">${m.icon} ${m.labelEn}</span>`;
+      }
+
+      function pill(text, color = "#5b8dee") {
+        return `<span class="pill" style="background:${color}1a;color:${color};border:1px solid ${color}28;">${esc(text)}</span>`;
+      }
+
+      function progBar(pct, color) {
+        return `<div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${color};"></div></div>`;
+      }
+
+      function attendColor(pct) {
+        return pct >= 80 ? "#3ecf8e" : pct >= 60 ? "#f5c842" : "#f06a6a";
+      }
+
+      function getStudentStats(sid) {
+        const recs = records.filter((r) => r.studentId === sid);
+        const present = recs.filter(
+          (r) => r.status === "present" || r.status === "late",
+        ).length;
+        return {
+          total: recs.length,
+          present,
+          pct: recs.length ? Math.round((present / recs.length) * 100) : 100,
+        };
+      }
+
+      function actionBtn(label, color, onclick) {
+        return `<button class="action-btn" style="background:${color}12;border-color:${color}28;color:${color};" onclick="${onclick}">${label}</button>`;
+      }
+
+      function emptyState(icon, text) {
+        return `<div class="empty"><div class="empty-icon">${icon}</div><div class="empty-text">${esc(text)}</div></div>`;
+      }
+
+      function showToast(type, msg) {
+        const t = document.getElementById("toast");
+        const el = document.createElement("div");
+        el.className = `toast-item toast-${type}`;
+        el.textContent = msg;
+        t.appendChild(el);
+        setTimeout(() => el.remove(), 3500);
+      }
+
+      function programColor(p) {
+        return PROGRAM_COLORS[p] || "#5b8dee";
+      }
+
+      // ─── NAVIGATION ──────────────────────────────────────────────────────────────
+      function buildNav() {
+        const nav = document.getElementById("nav");
+        let html = "";
+        let lastGroup = "";
+        NAV.forEach((n) => {
+          if (n.group !== lastGroup) {
+            html += `<div class="nav-section">${n.group}</div>`;
+            lastGroup = n.group;
+          }
+          html += `<button class="nav-btn ${currentPage === n.id ? "active" : ""}" onclick="navigate('${n.id}')">
+      <span class="nav-icon">${n.icon}</span>${n.label}
+    </button>`;
+        });
+        nav.innerHTML = html;
+      }
+
+      function navigate(page) {
+        currentPage = page;
+        document
+          .querySelectorAll(".page")
+          .forEach((p) => p.classList.remove("active"));
+        document.getElementById("page-" + page).classList.add("active");
+        buildNav();
+        renderPage(page);
+        updateSidebarInfo();
+      }
+
+      function updateSidebarInfo() {
+        document.getElementById("sidebar-info").textContent =
+          `${students.length} students · ${records.length} records`;
+      }
+
+      function renderPage(page) {
+        const el = document.getElementById("page-" + page);
+        switch (page) {
+          case "dashboard":
+            el.innerHTML = renderDashboard();
+            break;
+          case "scanner":
+            el.innerHTML = renderScanner();
+            bindScanner();
+            break;
+          case "students":
+            el.innerHTML = renderStudents();
+            break;
+          case "courses":
+            el.innerHTML = renderCourses();
+            break;
+          case "sessions":
+            el.innerHTML = renderSessions();
+            break;
+          case "records":
+            el.innerHTML = renderRecords();
+            break;
+          case "reports":
+            el.innerHTML = renderReports();
+            break;
+        }
+      }
+
+      function resetData() {
+        if (!confirm("Reset all data to demo defaults?")) return;
+        students = JSON.parse(JSON.stringify(SEED_STUDENTS));
+        courses = JSON.parse(JSON.stringify(SEED_COURSES));
+        sessions = JSON.parse(JSON.stringify(SEED_SESSIONS));
+        records = JSON.parse(JSON.stringify(SEED_RECORDS));
+        renderPage(currentPage);
+        updateSidebarInfo();
+        showToast("success", "Data reset to demo defaults");
+      }
+
+      // ─── MODAL ───────────────────────────────────────────────────────────────────
+      function openModal(title, body) {
+        document.getElementById("modal-title").textContent = title;
+        document.getElementById("modal-body").innerHTML = body;
+        document.getElementById("modal-overlay").classList.add("open");
+      }
+      function closeModal() {
+        document.getElementById("modal-overlay").classList.remove("open");
+      }
+
+      // ─── DASHBOARD ───────────────────────────────────────────────────────────────
+      function renderDashboard() {
+        const todaySessions = sessions.filter((s) => s.date === todayDate());
+        const todayRecords = records.filter((r) =>
+          todaySessions.some((s) => s.id === r.sessionId),
+        );
+        const present = todayRecords.filter(
+          (r) => r.status === "present",
+        ).length;
+        const late = todayRecords.filter((r) => r.status === "late").length;
+        const absent = todayRecords.filter((r) => r.status === "absent").length;
+        const rate =
+          todayRecords.length > 0
+            ? Math.round((present / todayRecords.length) * 100)
+            : 0;
+
+        const allPcts = students.map((s) => getStudentStats(s.id).pct);
+        const avgAtt = allPcts.length
+          ? Math.round(allPcts.reduce((a, b) => a + b, 0) / allPcts.length)
+          : 0;
+
+        const studentStats = students
+          .map((s) => {
+            const st = getStudentStats(s.id);
+            return { ...s, ...st };
+          })
+          .sort((a, b) => a.pct - b.pct);
+        const atRisk = studentStats.filter((s) => s.pct < 75 && s.total > 0);
+
+        const statBoxes = [
+          {
+            label: "Total Students",
+            value: students.length,
+            icon: "👥",
+            color: "#5b8dee",
+            sub: `${courses.length} courses`,
+          },
+          {
+            label: "Today Sessions",
+            value: todaySessions.length,
+            icon: "📅",
+            color: "#9d7de8",
+            sub: "Active today",
+          },
+          {
+            label: "Present Today",
+            value: present,
+            icon: "✅",
+            color: "#3ecf8e",
+            sub: "On time",
+          },
+          {
+            label: "Late Today",
+            value: late,
+            icon: "⏰",
+            color: "#f5c842",
+            sub: "After grace",
+          },
+          {
+            label: "Absent Today",
+            value: absent,
+            icon: "❌",
+            color: "#f06a6a",
+            sub: "Unexcused",
+          },
+          {
+            label: "Avg Attendance",
+            value: `${avgAtt}%`,
+            icon: "📊",
+            color: avgAtt > 75 ? "#3ecf8e" : "#f06a6a",
+            sub: "All students",
+          },
+        ]
+          .map(
+            (s) => `
+    <div class="stat">
+      <div class="stat-glow" style="background:${s.color};"></div>
+      <div class="stat-label">${s.label}</div>
+      <div class="stat-value" style="color:${s.color};">${s.value}</div>
+      <div class="stat-sub">${s.sub}</div>
+      <div class="stat-icon">${s.icon}</div>
+    </div>
+  `,
+          )
+          .join("");
+
+        const atRiskHTML =
+          atRisk.length === 0
+            ? emptyState("✅", "All students above threshold")
+            : atRisk
+                .map(
+                  (s) => `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+        <div class="flex gap-10" style="align-items:center;">
+          ${avatar(s.photo, "#f06a6a", 34)}
+          <div>
+            <div style="font-size:12px;font-weight:600;">${esc(s.name)}</div>
+            <div style="font-size:10px;color:var(--muted);">${s.id} · ${pill(s.program, programColor(s.program))}</div>
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:16px;font-weight:600;color:#f06a6a;letter-spacing:-0.5px;">${s.pct}%</div>
+          <div style="font-size:10px;color:var(--muted);">${s.present}/${s.total} sessions</div>
+        </div>
+      </div>
+    `,
+                )
+                .join("");
+
+        const recentHTML =
+          records.length === 0
+            ? emptyState("📋", "No records yet")
+            : [...records]
+                .reverse()
+                .slice(0, 6)
+                .map((r) => {
+                  const s = students.find((x) => x.id === r.studentId);
+                  const sess = sessions.find((x) => x.id === r.sessionId);
+                  const c = courses.find((x) => x.id === sess?.courseId);
+                  return `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);">
+          <div class="flex gap-9" style="align-items:center;gap:9px;">
+            ${avatar(s?.photo || "??", undefined, 30)}
+            <div>
+              <div style="font-size:12px;font-weight:500;">${esc(s?.name || "Unknown")}</div>
+              <div style="font-size:10px;color:var(--muted);">${c?.code || ""} · <span style="font-family:var(--mono);">${r.time}</span> · ${r.method}</div>
+            </div>
+          </div>
+          ${badge(r.status)}
+        </div>
+      `;
+                })
+                .join("");
+
+        const courseOverview = courses
+          .map((c) => {
+            const cSess = sessions.filter((s) => s.courseId === c.id);
+            const cRecs = records.filter((r) =>
+              cSess.some((s) => s.id === r.sessionId),
+            );
+            const pres = cRecs.filter(
+              (r) => r.status === "present" || r.status === "late",
+            ).length;
+            const pct =
+              cRecs.length > 0 ? Math.round((pres / cRecs.length) * 100) : 0;
+            const col = attendColor(pct);
+            return `
+      <div style="margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:10px;font-weight:700;color:var(--muted);font-family:var(--mono);">${esc(c.code)}</span>
+            <span style="font-size:12px;font-weight:500;">${esc(c.name)}</span>
+          </div>
+          <span style="font-size:13px;font-weight:600;color:${col};">${pct}%</span>
+        </div>
+        ${progBar(pct, col)}
+        <div style="font-size:10px;color:var(--muted);margin-top:4px;">${cSess.length} sessions · ${cRecs.length} records · ${esc(c.instructor)}</div>
+      </div>
+    `;
+          })
+          .join("");
+
+        return `
+    <div class="page-header mb-28">
+      <div>
+        <h1>Dashboard</h1>
+        <p class="subtitle">Attendance overview · ${fmt(todayDate())}</p>
+      </div>
+      <button class="btn btn-accent" onclick="navigate('scanner')">+ New Check-In</button>
+    </div>
+    <div class="stats-grid">${statBoxes}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+      <div class="card">
+        <div style="font-weight:600;font-size:13px;color:#f06a6a;margin-bottom:16px;display:flex;align-items:center;gap:6px;">
+          ⚠️ At-Risk Students ${pill(atRisk.length, "#f06a6a")}
+        </div>
+        ${atRiskHTML}
+      </div>
+      <div class="card">
+        <div style="font-weight:600;font-size:13px;margin-bottom:16px;">🕐 Recent Check-Ins</div>
+        ${recentHTML}
+      </div>
+    </div>
+    <div class="card">
+      <div style="font-weight:600;font-size:13px;margin-bottom:18px;">📚 Course Overview</div>
+      ${courseOverview}
+    </div>
+  `;
+      }
+
+      // ─── SCANNER ─────────────────────────────────────────────────────────────────
+      function renderScanner() {
+        const sessionOptions = sessions
+          .map((s) => {
+            const c = courses.find((x) => x.id === s.courseId);
+            return `<option value="${s.id}" ${s.id === scannerSession ? "selected" : ""}>${c?.code || ""} · ${s.date} · ${s.startTime}</option>`;
+          })
+          .join("");
+
+        const sess = sessions.find((s) => s.id === scannerSession);
+        const course = sess
+          ? courses.find((c) => c.id === sess.courseId)
+          : null;
+        const sessInfo = sess
+          ? `
+    <div style="margin-top:10px;padding:12px 14px;border-radius:var(--r-sm);background:rgba(91,141,238,0.06);border:1px solid rgba(91,141,238,0.15);font-size:12px;">
+      <div style="font-weight:600;color:var(--accentL);">${esc(course?.name || "")}</div>
+      <div style="color:var(--muted);margin-top:3px;">${sess.room} · ${sess.startTime}–${sess.endTime}</div>
+      <div style="color:var(--muted);">${esc(course?.instructor || "")}</div>
+    </div>
+  `
+          : "";
+
+        const sessionRecs = records.filter(
+          (r) => r.sessionId === scannerSession,
+        );
+        const sessionStudents = students.filter((s) => {
+          if (!course) return true;
+          return s.program === course.program;
+        });
+        const checkedCount = sessionRecs.filter(
+          (r) => r.status !== "absent",
+        ).length;
+        const notCheckedCount = sessionStudents.length - sessionRecs.length;
+
+        const methodTabs = METHODS.map(
+          (m) =>
+            `<button class="method-tab ${m === scanMethod ? "active" : ""}" onclick="setScanMethod('${esc(m)}')">${esc(m)}</button>`,
+        ).join("");
+
+        const rosterHTML = !scannerSession
+          ? emptyState("📅", "Select a session to view roster")
+          : sessionStudents
+              .map((s) => {
+                const rec = sessionRecs.find((r) => r.studentId === s.id);
+                const col = rec
+                  ? STATUS_META[rec.status].color
+                  : "var(--muted)";
+                const bg = rec
+                  ? STATUS_META[rec.status].color + "0d"
+                  : "transparent";
+                const bord = rec
+                  ? STATUS_META[rec.status].color + "28"
+                  : "var(--border)";
+                const rightHTML = rec
+                  ? `<div class="flex gap-8" style="align-items:center;">
+             <div style="font-size:10px;color:var(--muted);text-align:right;font-family:var(--mono);"><div>${rec.time}</div><div style="font-family:var(--font);">${rec.method}</div></div>
+             ${badge(rec.status)}
+           </div>`
+                  : `<button onclick="scannerCheckIn('${s.id}')" style="padding:6px 14px;border-radius:var(--r-sm);background:rgba(91,141,238,0.1);border:1px solid rgba(91,141,238,0.2);color:#7aaaf5;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font);">Check In</button>`;
+                return `
+        <div class="roster-row" style="background:${bg};border-color:${bord};">
+          <div class="flex gap-10" style="align-items:center;">
+            ${avatar(s.photo, col, 34)}
+            <div>
+              <div style="font-size:12px;font-weight:600;">${esc(s.name)}</div>
+              <div style="font-size:10px;color:var(--muted);">${s.id} · ${esc(s.nameEn)}</div>
+            </div>
+          </div>
+          ${rightHTML}
+        </div>
+      `;
+              })
+              .join("");
+
+        const studentOptions = students
+          .map(
+            (s) => `<option value="${s.id}">${s.id} – ${esc(s.name)}</option>`,
+          )
+          .join("");
+
+        return `
+    <div class="page-header mb-24">
+      <div>
+        <h1>Live Check-In</h1>
+        <p class="subtitle">ស្កេនអត្តសញ្ញាណប័ណ្ណ ឬបញ្ចូលដៃ</p>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:320px 1fr;gap:16px;">
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div class="card">
+          <div class="section-label">Session</div>
+          <select onchange="setScannerSession(this.value)" style="width:100%;">
+            <option value="">— Choose session —</option>
+            ${sessionOptions}
+          </select>
+          ${sessInfo}
+        </div>
+        <div class="card">
+          <div class="section-label">Scan Method</div>
+          <div class="flex gap-6 mb-16" style="gap:6px;">${methodTabs}</div>
+          <div class="flex gap-8">
+            <input class="scan-input" id="scan-input" placeholder="Student ID or name…"
+              onkeydown="if(event.key==='Enter')doScan()" autocomplete="off" />
+            <button class="btn btn-accent" onclick="doScan()" style="padding:10px 14px;font-size:14px;">✓</button>
+          </div>
+          <div id="scan-result"></div>
+        </div>
+        <div class="card">
+          <div class="section-label">Manual Entry</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div>
+              <div class="field-label">Student</div>
+              <select id="manual-student">
+                <option value="">— Select —</option>
+                ${studentOptions}
+              </select>
+            </div>
+            <div>
+              <div class="field-label">Status</div>
+              <select id="manual-status">
+                ${Object.entries(STATUS_META)
+                  .map(([k, v]) => `<option value="${k}">${v.labelEn}</option>`)
+                  .join("")}
+              </select>
+            </div>
+            <div>
+              <div class="field-label">Note (optional)</div>
+              <input type="text" id="manual-note" placeholder="Add a note…" />
+            </div>
+          </div>
+          <button onclick="doManualEntry()" class="btn btn-purple" style="width:100%;margin-top:14px;justify-content:center;">Add Record</button>
+        </div>
+        <button class="btn-red-ghost" onclick="markAllAbsent()" style="width:100%;justify-content:center;">
+          ⚠️ Mark All Remaining Absent (${notCheckedCount})
+        </button>
+      </div>
+      <div class="card" style="padding:18px 20px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+          <div style="font-weight:600;font-size:13px;">Session Roster</div>
+          <div class="flex gap-8">
+            ${pill(checkedCount + " checked", "#3ecf8e")}
+            ${pill(notCheckedCount + " remaining", "#f06a6a")}
+          </div>
+        </div>
+        <div id="roster-list">${rosterHTML}</div>
+      </div>
+    </div>
+  `;
+      }
+
+      function bindScanner() {
+        setTimeout(() => {
+          const i = document.getElementById("scan-input");
+          if (i) i.focus();
+        }, 100);
+      }
+      function setScanMethod(m) {
+        scanMethod = m;
+        document.querySelectorAll(".method-tab").forEach((b) => {
+          b.classList.toggle("active", b.textContent.trim() === m);
+        });
+      }
+      function setScannerSession(id) {
+        scannerSession = id;
+        renderPage("scanner");
+        bindScanner();
+      }
+      function doScan() {
+        const inp = document.getElementById("scan-input");
+        const val = inp.value.trim();
+        if (!val) return;
+        performCheckIn(val, null, "");
+        inp.value = "";
+        inp.focus();
+      }
+      function scannerCheckIn(studentId) {
+        performCheckIn(studentId, null, "");
+      }
+      function doManualEntry() {
+        const sid = document.getElementById("manual-student").value;
+        const status = document.getElementById("manual-status").value;
+        const note = document.getElementById("manual-note").value;
+        if (!sid) return;
+        performCheckIn(sid, status, note);
+        document.getElementById("manual-student").value = "";
+        document.getElementById("manual-note").value = "";
+      }
+      function markAllAbsent() {
+        if (!scannerSession) return;
+        const sess = sessions.find((s) => s.id === scannerSession);
+        const course = sess
+          ? courses.find((c) => c.id === sess.courseId)
+          : null;
+        const sessionStudents = students.filter(
+          (s) => !course || s.program === course.program,
+        );
+        const sessionRecs = records.filter(
+          (r) => r.sessionId === scannerSession,
+        );
+        const now = nowTime();
+        let count = 0;
+        sessionStudents.forEach((s) => {
+          if (!sessionRecs.some((r) => r.studentId === s.id)) {
+            records.push({
+              id: "R" + uid(),
+              sessionId: scannerSession,
+              studentId: s.id,
+              time: now,
+              status: "absent",
+              method: "System",
+              note: "Auto-marked absent",
+            });
+            count++;
+          }
+        });
+        updateSidebarInfo();
+        renderPage("scanner");
+        if (count > 0) showToast("warn", `${count} students marked absent`);
+      }
+      function performCheckIn(input, overrideStatus, note) {
+        if (!scannerSession) {
+          showScanResult("error", "Please select a session first");
+          return;
+        }
+        const student = students.find(
+          (s) =>
+            s.id === input ||
+            s.nameEn.toLowerCase().includes(input.toLowerCase()),
+        );
+        if (!student) {
+          showScanResult("error", `Student not found: "${input}"`);
+          return;
+        }
+        const existing = records.find(
+          (r) => r.sessionId === scannerSession && r.studentId === student.id,
+        );
+        if (existing) {
+          showScanResult(
+            "warn",
+            `${student.nameEn} already checked in (${existing.status})`,
+          );
+          return;
+        }
+        const sess = sessions.find((s) => s.id === scannerSession);
+        const now = nowTime();
+        let status = overrideStatus;
+        if (!status && sess) {
+          const [sh, sm] = sess.startTime.split(":").map(Number);
+          const [nh, nm] = now.split(":").map(Number);
+          const diff = nh * 60 + nm - (sh * 60 + sm);
+          status = diff <= sess.lateAfter ? "present" : "late";
+        }
+        status = status || "present";
+        const rec = {
+          id: "R" + uid(),
+          sessionId: scannerSession,
+          studentId: student.id,
+          time: now,
+          status,
+          method: scanMethod,
+          note,
+        };
+        records.push(rec);
+        recentScans.unshift({ ...rec, studentName: student.name });
+        if (recentScans.length > 10) recentScans.length = 10;
+        updateSidebarInfo();
+
+        // Update roster in-place
+        const rosterEl = document.getElementById("roster-list");
+        if (rosterEl) {
+          const sess2 = sessions.find((s) => s.id === scannerSession);
+          const course = sess2
+            ? courses.find((c) => c.id === sess2.courseId)
+            : null;
+          const sessionStudents = students.filter(
+            (s) => !course || s.program === course.program,
+          );
+          const sessionRecs = records.filter(
+            (r) => r.sessionId === scannerSession,
+          );
+          const checkedCount = sessionRecs.filter(
+            (r) => r.status !== "absent",
+          ).length;
+          const notCheckedCount = sessionStudents.length - sessionRecs.length;
+          const pillsEl = document.querySelector("#page-scanner .flex.gap-8");
+          if (pillsEl)
+            pillsEl.innerHTML =
+              pill(checkedCount + " checked", "#3ecf8e") +
+              pill(notCheckedCount + " remaining", "#f06a6a");
+          rosterEl.innerHTML = sessionStudents
+            .map((s) => {
+              const rec = sessionRecs.find((r) => r.studentId === s.id);
+              const col = rec ? STATUS_META[rec.status].color : "var(--muted)";
+              const bg = rec
+                ? STATUS_META[rec.status].color + "0d"
+                : "transparent";
+              const bord = rec
+                ? STATUS_META[rec.status].color + "28"
+                : "var(--border)";
+              const rightHTML = rec
+                ? `<div class="flex gap-8" style="align-items:center;"><div style="font-size:10px;color:var(--muted);text-align:right;font-family:var(--mono);"><div>${rec.time}</div><div style="font-family:var(--font);">${rec.method}</div></div>${badge(rec.status)}</div>`
+                : `<button onclick="scannerCheckIn('${s.id}')" style="padding:6px 14px;border-radius:var(--r-sm);background:rgba(91,141,238,0.1);border:1px solid rgba(91,141,238,0.2);color:#7aaaf5;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font);">Check In</button>`;
+              return `<div class="roster-row" style="background:${bg};border-color:${bord};">
+        <div class="flex gap-10" style="align-items:center;">${avatar(s.photo, col, 34)}<div><div style="font-size:12px;font-weight:600;">${esc(s.name)}</div><div style="font-size:10px;color:var(--muted);">${s.id} · ${esc(s.nameEn)}</div></div></div>
+        ${rightHTML}</div>`;
+            })
+            .join("");
+        }
+        showScanResult(
+          "success",
+          `✅ ${student.nameEn} checked in — ${STATUS_META[status].labelEn}`,
+        );
+        showToast("success", `${student.nameEn} checked in as ${status}`);
+        setTimeout(() => {
+          const el = document.getElementById("scan-result");
+          if (el) el.innerHTML = "";
+        }, 3000);
+      }
+      function showScanResult(type, html) {
+        const el = document.getElementById("scan-result");
+        if (!el) return;
+        const cls = {
+          success: "scan-success",
+          warn: "scan-warn",
+          error: "scan-error",
+        }[type];
+        el.innerHTML = `<div class="scan-result ${cls}">${html}</div>`;
+      }
+
+      // ─── STUDENTS ────────────────────────────────────────────────────────────────
+      let studentSearch = "",
+        studentFilter = "All";
+      function renderStudents() {
+        const filtered = students.filter((s) => {
+          const ok =
+            !studentSearch ||
+            s.name.includes(studentSearch) ||
+            s.nameEn.toLowerCase().includes(studentSearch.toLowerCase()) ||
+            s.id.includes(studentSearch);
+          return ok && (studentFilter === "All" || s.program === studentFilter);
+        });
+        const rows =
+          filtered.length === 0
+            ? `<tr><td colspan="6">${emptyState("👥", "No students found")}</td></tr>`
+            : filtered
+                .map((s) => {
+                  const st = getStudentStats(s.id);
+                  const col = attendColor(st.pct);
+                  return `
+          <tr>
+            <td>
+              <div class="flex gap-10" style="align-items:center;">
+                ${avatar(s.photo, programColor(s.program), 36)}
+                <div>
+                  <div style="font-size:13px;font-weight:600;">${esc(s.name)}</div>
+                  <div style="font-size:10px;color:var(--muted);font-family:var(--mono);">${s.id} · ${esc(s.nameEn)}</div>
+                </div>
+              </div>
+            </td>
+            <td>${pill(s.program, programColor(s.program))}</td>
+            <td style="font-size:12px;color:var(--muted2);">Year ${s.year}</td>
+            <td style="font-size:12px;color:var(--muted);font-family:var(--mono);">${esc(s.phone)}</td>
+            <td>
+              <div class="flex gap-8" style="align-items:center;">
+                ${progBar(st.pct, col).replace('class="progress-bar"', 'class="progress-bar" style="width:64px;"')}
+                <span style="font-size:12px;font-weight:600;color:${col};">${st.pct}%</span>
+              </div>
+              <div style="font-size:10px;color:var(--muted);margin-top:3px;">${st.present}/${st.total} sessions</div>
+            </td>
+            <td>
+              <div class="flex gap-6" style="gap:6px;">
+                ${actionBtn("View", "#5b8dee", `viewStudent('${s.id}')`)}
+                ${actionBtn("Edit", "#9d7de8", `editStudent('${s.id}')`)}
+                ${actionBtn("Del", "#f06a6a", `deleteStudent('${s.id}')`)}
+              </div>
+            </td>
+          </tr>
+        `;
+                })
+                .join("");
+        return `
+    <div class="page-header mb-24">
+      <div>
+        <h1>Students</h1>
+        <p class="subtitle">${students.length} total students</p>
+      </div>
+      <button class="btn btn-accent" onclick="addStudent()">+ Add Student</button>
+    </div>
+    <div class="flex gap-10 mb-16">
+      <div class="search-wrap" style="flex:1;">
+        <input type="text" value="${esc(studentSearch)}" placeholder="Search by name, ID…"
+          oninput="studentSearch=this.value;renderPage('students')" />
+      </div>
+      <select onchange="studentFilter=this.value;renderPage('students')" style="width:130px;">
+        ${["All", "IT", "CS", "BA", "ENG", "MED"].map((p) => `<option ${p === studentFilter ? "selected" : ""}>${p}</option>`).join("")}
+      </select>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <table>
+        <thead><tr>${["Student", "Program", "Year", "Phone", "Attendance", "Actions"].map((h) => `<th>${h}</th>`).join("")}</tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  `;
+      }
+
+      function addStudent() {
+        const id = "S" + uid().slice(0, 3);
+        openModal(
+          "Add Student",
+          studentForm(
+            {
+              id,
+              name: "",
+              nameEn: "",
+              gender: "M",
+              phone: "",
+              program: "IT",
+              year: 1,
+              photo: "",
+            },
+            "add",
+          ),
+        );
+      }
+      function editStudent(id) {
+        const s = students.find((x) => x.id === id);
+        if (!s) return;
+        openModal("Edit Student", studentForm(s, "edit"));
+      }
+      function studentForm(s, mode) {
+        return `
+    <div class="grid-2">
+      <div class="span-2">
+        <div class="field-label">Student ID <span class="req">*</span></div>
+        <input type="text" id="sf-id" value="${esc(s.id)}" />
+      </div>
+      <div>
+        <div class="field-label">Khmer Name <span class="req">*</span></div>
+        <input type="text" id="sf-name" value="${esc(s.name)}" />
+      </div>
+      <div>
+        <div class="field-label">English Name <span class="req">*</span></div>
+        <input type="text" id="sf-nameEn" value="${esc(s.nameEn)}" />
+      </div>
+      <div>
+        <div class="field-label">Gender</div>
+        <select id="sf-gender">
+          <option value="M" ${s.gender === "M" ? "selected" : ""}>Male</option>
+          <option value="F" ${s.gender === "F" ? "selected" : ""}>Female</option>
+        </select>
+      </div>
+      <div>
+        <div class="field-label">Phone</div>
+        <input type="text" id="sf-phone" value="${esc(s.phone)}" />
+      </div>
+      <div>
+        <div class="field-label">Program</div>
+        <select id="sf-program">
+          ${["IT", "CS", "BA", "ENG", "MED"].map((p) => `<option ${p === s.program ? "selected" : ""}>${p}</option>`).join("")}
+        </select>
+      </div>
+      <div>
+        <div class="field-label">Year</div>
+        <input type="number" id="sf-year" value="${s.year}" min="1" max="6" />
+      </div>
+    </div>
+    <div class="flex gap-10" style="justify-content:flex-end;margin-top:22px;">
+      <button onclick="closeModal()" class="btn btn-ghost">Cancel</button>
+      <button class="btn btn-accent" onclick="saveStudent('${esc(s.id)}','${mode}')">${mode === "add" ? "Add Student" : "Save Changes"}</button>
+    </div>
+  `;
+      }
+      function saveStudent(oldId, mode) {
+        const name = document.getElementById("sf-name").value.trim();
+        const nameEn = document.getElementById("sf-nameEn").value.trim();
+        if (!name || !nameEn) {
+          showToast("error", "Name fields are required");
+          return;
+        }
+        const id = document.getElementById("sf-id").value.trim();
+        const photo = nameEn
+          .split(" ")
+          .map((w) => w[0])
+          .join("")
+          .slice(0, 2)
+          .toUpperCase();
+        const obj = {
+          id,
+          name,
+          nameEn,
+          photo,
+          gender: document.getElementById("sf-gender").value,
+          phone: document.getElementById("sf-phone").value.trim(),
+          program: document.getElementById("sf-program").value,
+          year: parseInt(document.getElementById("sf-year").value) || 1,
+        };
+        if (mode === "add") {
+          students.push(obj);
+          showToast("success", "Student added");
+        } else {
+          const i = students.findIndex((s) => s.id === oldId);
+          if (i >= 0) students[i] = obj;
+          showToast("success", "Student updated");
+        }
+        closeModal();
+        updateSidebarInfo();
+        renderPage("students");
+      }
+      function deleteStudent(id) {
+        if (!confirm("Delete this student?")) return;
+        students = students.filter((s) => s.id !== id);
+        updateSidebarInfo();
+        renderPage("students");
+        showToast("warn", "Student deleted");
+      }
+      function viewStudent(id) {
+        const s = students.find((x) => x.id === id);
+        if (!s) return;
+        const st = getStudentStats(id);
+        const col = attendColor(st.pct);
+        const viewRecs = records.filter((r) => r.studentId === id);
+        const recsHTML =
+          viewRecs.length === 0
+            ? emptyState("📋", "No attendance records")
+            : viewRecs
+                .map((r) => {
+                  const sess = sessions.find((x) => x.id === r.sessionId);
+                  const c = courses.find((x) => x.id === sess?.courseId);
+                  return `<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-radius:var(--r-sm);background:var(--surface);margin-bottom:4px;">
+        <div>
+          <div style="font-size:12px;font-weight:500;">${esc(c?.code || "")} – ${esc(c?.name || "")}</div>
+          <div style="font-size:10px;color:var(--muted);font-family:var(--mono);">${sess?.date || ""} · ${r.time} · <span style="font-family:var(--font);">${r.method}</span></div>
+        </div>
+        ${badge(r.status)}
+      </div>`;
+                })
+                .join("");
+        openModal(
+          "Student Profile",
+          `
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;padding:16px 18px;background:var(--surface);border-radius:var(--r-lg);">
+      ${avatar(s.photo, programColor(s.program), 54)}
+      <div>
+        <div style="font-size:19px;font-weight:600;letter-spacing:-0.4px;">${esc(s.name)}</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:2px;">${esc(s.nameEn)} · <span style="font-family:var(--mono);">${s.id}</span></div>
+        <div class="flex gap-6" style="margin-top:8px;gap:6px;">
+          ${pill(s.program, programColor(s.program))} ${pill("Year " + s.year)} ${pill(st.pct + "% attendance", col)}
+        </div>
+      </div>
+    </div>
+    <div class="section-label">Attendance History</div>
+    <div style="max-height:280px;overflow-y:auto;">${recsHTML}</div>
+  `,
+        );
+      }
+
+      // ─── COURSES ─────────────────────────────────────────────────────────────────
+      function renderCourses() {
+        const cards = courses
+          .map((c) => {
+            const cSess = sessions.filter((s) => s.courseId === c.id);
+            const cRecs = records.filter((r) =>
+              cSess.some((s) => s.id === r.sessionId),
+            );
+            const pres = cRecs.filter(
+              (r) => r.status === "present" || r.status === "late",
+            ).length;
+            const pct = cRecs.length
+              ? Math.round((pres / cRecs.length) * 100)
+              : 0;
+            const col = attendColor(pct);
+            const pc = programColor(c.program);
+            return `
+      <div class="course-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">
+          <div>
+            <div style="font-size:10px;font-weight:700;color:${pc};letter-spacing:1.2px;font-family:var(--mono);margin-bottom:4px;">${esc(c.code)}</div>
+            <div style="font-size:15px;font-weight:600;letter-spacing:-0.3px;margin-bottom:2px;">${esc(c.name)}</div>
+            <div style="font-size:11px;color:var(--muted);">${esc(c.nameKh)}</div>
+          </div>
+          ${pill(c.program, pc)}
+        </div>
+        <div style="font-size:11px;color:var(--muted2);margin-bottom:14px;display:flex;align-items:center;gap:4px;">
+          👨‍🏫 ${esc(c.instructor)} · ${c.credits} credits · ${cSess.length} sessions
+        </div>
+        ${progBar(pct, col)}
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;margin-bottom:14px;">
+          <span style="font-size:10px;color:var(--muted);">${cRecs.length} total records</span>
+          <span style="font-size:13px;font-weight:600;color:${col};">${pct}% attendance</span>
+        </div>
+        <div class="flex gap-8">
+          ${actionBtn("Edit", "#9d7de8", `editCourse('${c.id}')`)}
+          ${actionBtn("Delete", "#f06a6a", `deleteCourse('${c.id}')`)}
+        </div>
+      </div>
+    `;
+          })
+          .join("");
+        return `
+    <div class="page-header mb-24">
+      <div><h1>Courses</h1><p class="subtitle">${courses.length} courses</p></div>
+      <button class="btn btn-purple" onclick="addCourse()">+ Add Course</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;">${cards}</div>
+  `;
+      }
+      function courseForm(c, mode) {
+        return `
+    <div class="grid-2">
+      <div><div class="field-label">Course Code <span class="req">*</span></div><input type="text" id="cf-code" value="${esc(c.code)}" /></div>
+      <div><div class="field-label">Program</div><select id="cf-program">${["IT", "CS", "BA", "ENG"].map((p) => `<option ${p === c.program ? "selected" : ""}>${p}</option>`).join("")}</select></div>
+      <div class="span-2"><div class="field-label">Course Name (EN) <span class="req">*</span></div><input type="text" id="cf-name" value="${esc(c.name)}" /></div>
+      <div class="span-2"><div class="field-label">Course Name (KH)</div><input type="text" id="cf-nameKh" value="${esc(c.nameKh)}" /></div>
+      <div class="span-2"><div class="field-label">Instructor</div><input type="text" id="cf-instructor" value="${esc(c.instructor)}" /></div>
+      <div><div class="field-label">Credits</div><input type="number" id="cf-credits" value="${c.credits}" min="1" max="6" /></div>
+    </div>
+    <div class="flex gap-10" style="justify-content:flex-end;margin-top:22px;">
+      <button onclick="closeModal()" class="btn btn-ghost">Cancel</button>
+      <button class="btn btn-purple" onclick="saveCourse('${esc(c.id)}','${mode}')">Save</button>
+    </div>
+  `;
+      }
+      function addCourse() {
+        openModal(
+          "Add Course",
+          courseForm(
+            {
+              id: "C" + uid().slice(0, 3),
+              code: "",
+              name: "",
+              nameKh: "",
+              credits: 3,
+              program: "IT",
+              instructor: "",
+            },
+            "add",
+          ),
+        );
+      }
+      function editCourse(id) {
+        const c = courses.find((x) => x.id === id);
+        if (c) openModal("Edit Course", courseForm(c, "edit"));
+      }
+      function saveCourse(oldId, mode) {
+        const code = document.getElementById("cf-code").value.trim();
+        const name = document.getElementById("cf-name").value.trim();
+        if (!code || !name) return;
+        const obj = {
+          id: oldId,
+          code,
+          name,
+          nameKh: document.getElementById("cf-nameKh").value.trim(),
+          instructor: document.getElementById("cf-instructor").value.trim(),
+          program: document.getElementById("cf-program").value,
+          credits: parseInt(document.getElementById("cf-credits").value) || 3,
+        };
+        if (mode === "add") {
+          obj.id = "C" + uid().slice(0, 3);
+          courses.push(obj);
+          showToast("success", "Course added");
+        } else {
+          const i = courses.findIndex((c) => c.id === oldId);
+          if (i >= 0) courses[i] = obj;
+          showToast("success", "Course updated");
+        }
+        closeModal();
+        renderPage("courses");
+      }
+      function deleteCourse(id) {
+        if (!confirm("Delete course?")) return;
+        courses = courses.filter((c) => c.id !== id);
+        renderPage("courses");
+        showToast("warn", "Course deleted");
+      }
+
+      // ─── SESSIONS ────────────────────────────────────────────────────────────────
+      let sessionFilter = "All";
+      function renderSessions() {
+        const filtered = sessions.filter(
+          (s) => sessionFilter === "All" || s.courseId === sessionFilter,
+        );
+        const rows =
+          filtered.length === 0
+            ? `<tr><td colspan="7">${emptyState("📅", "No sessions found")}</td></tr>`
+            : filtered
+                .map((s) => {
+                  const c = courses.find((x) => x.id === s.courseId);
+                  const recs = records.filter((r) => r.sessionId === s.id);
+                  const sp = recs.filter((r) => r.status === "present").length;
+                  const sl = recs.filter((r) => r.status === "late").length;
+                  const sa = recs.filter((r) => r.status === "absent").length;
+                  return `<tr>
+        <td><div style="font-size:13px;font-weight:600;">${esc(c?.code || "")}</div><div style="font-size:10px;color:var(--muted);">${esc(c?.name || "")}</div></td>
+        <td style="font-size:12px;font-family:var(--mono);">${s.date}</td>
+        <td style="font-size:12px;color:var(--muted2);font-family:var(--mono);">${s.startTime}–${s.endTime}</td>
+        <td style="font-size:12px;color:var(--muted2);">${esc(s.room)}</td>
+        <td><span style="font-size:11px;font-weight:600;color:var(--yellow);background:rgba(245,200,66,0.1);padding:2px 8px;border-radius:6px;">${s.lateAfter}m</span></td>
+        <td><div class="flex gap-10" style="font-size:11px;font-weight:600;">
+          <span style="color:#3ecf8e;">✓ ${sp}</span>
+          <span style="color:#f5c842;">⏰ ${sl}</span>
+          <span style="color:#f06a6a;">✗ ${sa}</span>
+        </div></td>
+        <td><div class="flex gap-6" style="gap:6px;">
+          ${actionBtn("Edit", "#3ecf8e", `editSession('${s.id}')`)}
+          ${actionBtn("Del", "#f06a6a", `deleteSession('${s.id}')`)}
+        </div></td>
+      </tr>`;
+                })
+                .join("");
+        return `
+    <div class="page-header mb-24">
+      <div><h1>Sessions</h1><p class="subtitle">${sessions.length} class sessions</p></div>
+      <button class="btn btn-green" onclick="addSession()">+ Add Session</button>
+    </div>
+    <div class="flex gap-10 mb-16">
+      <select onchange="sessionFilter=this.value;renderPage('sessions')" style="width:260px;">
+        <option value="All">All Courses</option>
+        ${courses.map((c) => `<option value="${c.id}" ${c.id === sessionFilter ? "selected" : ""}>${esc(c.code)} – ${esc(c.name)}</option>`).join("")}
+      </select>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <table>
+        <thead><tr>${["Course", "Date", "Time", "Room", "Late After", "Records", "Actions"].map((h) => `<th>${h}</th>`).join("")}</tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  `;
+      }
+      function sessionForm(s, mode) {
+        return `
+    <div class="grid-2">
+      <div class="span-2"><div class="field-label">Course <span class="req">*</span></div>
+        <select id="ssf-courseId">${courses.map((c) => `<option value="${c.id}" ${c.id === s.courseId ? "selected" : ""}>${esc(c.code)} – ${esc(c.name)}</option>`).join("")}</select>
+      </div>
+      <div><div class="field-label">Date</div><input type="date" id="ssf-date" value="${s.date}" /></div>
+      <div><div class="field-label">Room</div><input type="text" id="ssf-room" value="${esc(s.room)}" /></div>
+      <div><div class="field-label">Start Time</div><input type="time" id="ssf-startTime" value="${s.startTime}" /></div>
+      <div><div class="field-label">End Time</div><input type="time" id="ssf-endTime" value="${s.endTime}" /></div>
+      <div class="span-2"><div class="field-label">Late After (minutes)</div><input type="number" id="ssf-lateAfter" value="${s.lateAfter}" min="0" /></div>
+    </div>
+    <div class="flex gap-10" style="justify-content:flex-end;margin-top:22px;">
+      <button onclick="closeModal()" class="btn btn-ghost">Cancel</button>
+      <button class="btn btn-green" onclick="saveSession('${esc(s.id)}','${mode}')">Save</button>
+    </div>
+  `;
+      }
+      function addSession() {
+        openModal(
+          "Add Session",
+          sessionForm(
+            {
+              id: "SS" + uid().slice(0, 4),
+              courseId: courses[0]?.id || "",
+              date: todayDate(),
+              startTime: "08:00",
+              endTime: "10:00",
+              room: "Room 101",
+              lateAfter: 15,
+            },
+            "add",
+          ),
+        );
+      }
+      function editSession(id) {
+        const s = sessions.find((x) => x.id === id);
+        if (s) openModal("Edit Session", sessionForm(s, "edit"));
+      }
+      function saveSession(oldId, mode) {
+        const courseId = document.getElementById("ssf-courseId").value;
+        const date = document.getElementById("ssf-date").value;
+        if (!courseId || !date) return;
+        const obj = {
+          id: oldId,
+          courseId,
+          date,
+          room: document.getElementById("ssf-room").value.trim(),
+          startTime: document.getElementById("ssf-startTime").value,
+          endTime: document.getElementById("ssf-endTime").value,
+          lateAfter:
+            parseInt(document.getElementById("ssf-lateAfter").value) || 15,
+        };
+        if (mode === "add") {
+          obj.id = "SS" + uid().slice(0, 4);
+          sessions.push(obj);
+          showToast("success", "Session added");
+        } else {
+          const i = sessions.findIndex((s) => s.id === oldId);
+          if (i >= 0) sessions[i] = obj;
+          showToast("success", "Session updated");
+        }
+        closeModal();
+        renderPage("sessions");
+      }
+      function deleteSession(id) {
+        if (!confirm("Delete session?")) return;
+        sessions = sessions.filter((s) => s.id !== id);
+        renderPage("sessions");
+        showToast("warn", "Session deleted");
+      }
+
+      // ─── RECORDS ─────────────────────────────────────────────────────────────────
+      let recSearch = "",
+        recSessionFilter = "All",
+        recStatusFilter = "All";
+      function renderRecords() {
+        const filtered = records.filter((r) => {
+          const s = students.find((x) => x.id === r.studentId);
+          const matchSearch =
+            !recSearch ||
+            (s &&
+              (s.name.includes(recSearch) ||
+                s.nameEn.toLowerCase().includes(recSearch.toLowerCase()) ||
+                s.id.includes(recSearch)));
+          return (
+            matchSearch &&
+            (recSessionFilter === "All" || r.sessionId === recSessionFilter) &&
+            (recStatusFilter === "All" || r.status === recStatusFilter)
+          );
+        });
+        const rows =
+          filtered.length === 0
+            ? `<tr><td colspan="7">${emptyState("📋", "No records found")}</td></tr>`
+            : filtered
+                .map((r) => {
+                  const s = students.find((x) => x.id === r.studentId);
+                  const sess = sessions.find((x) => x.id === r.sessionId);
+                  const c = courses.find((x) => x.id === sess?.courseId);
+                  return `<tr>
+        <td><div class="flex gap-8" style="align-items:center;">${avatar(s?.photo || "??", undefined, 30)}
+          <div><div style="font-size:12px;font-weight:600;">${esc(s?.name || "Unknown")}</div>
+          <div style="font-size:10px;color:var(--muted);font-family:var(--mono);">${s?.id || ""}</div></div></div></td>
+        <td><div style="font-size:12px;font-weight:600;">${esc(c?.code || "")}</div>
+          <div style="font-size:10px;color:var(--muted);font-family:var(--mono);">${sess?.date || ""} · ${esc(sess?.room || "")}</div></td>
+        <td style="font-size:12px;font-family:var(--mono);">${r.time}</td>
+        <td>${pill(r.method, "#5b8dee")}</td>
+        <td>${badge(r.status)}</td>
+        <td style="font-size:10px;color:var(--muted);max-width:120px;">${esc(r.note) || "—"}</td>
+        <td><div class="flex gap-6" style="gap:6px;">
+          ${actionBtn("Edit", "#f5c842", `editRecord('${r.id}')`)}
+          ${actionBtn("Del", "#f06a6a", `deleteRecord('${r.id}')`)}
+        </div></td>
+      </tr>`;
+                })
+                .join("");
+        return `
+    <div class="page-header mb-24">
+      <div><h1>Records</h1><p class="subtitle">${records.length} total · ${filtered.length} shown</p></div>
+    </div>
+    <div class="flex gap-10 mb-16" style="flex-wrap:wrap;">
+      <div class="search-wrap" style="flex:1;min-width:180px;">
+        <input type="text" value="${esc(recSearch)}" placeholder="Search student…" oninput="recSearch=this.value;renderPage('records')" />
+      </div>
+      <select onchange="recSessionFilter=this.value;renderPage('records')" style="min-width:200px;">
+        <option value="All">All Sessions</option>
+        ${sessions
+          .map((s) => {
+            const c = courses.find((x) => x.id === s.courseId);
+            return `<option value="${s.id}" ${s.id === recSessionFilter ? "selected" : ""}>${esc(c?.code || "")} · ${s.date}</option>`;
+          })
+          .join("")}
+      </select>
+      <select onchange="recStatusFilter=this.value;renderPage('records')" style="width:140px;">
+        <option value="All">All Status</option>
+        ${Object.entries(STATUS_META)
+          .map(
+            ([k, v]) =>
+              `<option value="${k}" ${k === recStatusFilter ? "selected" : ""}>${v.labelEn}</option>`,
+          )
+          .join("")}
+      </select>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <table>
+        <thead><tr>${["Student", "Session", "Time", "Method", "Status", "Note", "Actions"].map((h) => `<th>${h}</th>`).join("")}</tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  `;
+      }
+      function editRecord(id) {
+        const r = records.find((x) => x.id === id);
+        if (!r) return;
+        openModal(
+          "Edit Record",
+          `
+    <div style="display:grid;gap:14px;">
+      <div><div class="field-label">Status</div><select id="rf-status">${Object.entries(
+        STATUS_META,
+      )
+        .map(
+          ([k, v]) =>
+            `<option value="${k}" ${k === r.status ? "selected" : ""}>${v.labelEn}</option>`,
+        )
+        .join("")}</select></div>
+      <div><div class="field-label">Time</div><input type="time" id="rf-time" value="${r.time}" /></div>
+      <div><div class="field-label">Method</div><select id="rf-method">${METHODS.map((m) => `<option ${m === r.method ? "selected" : ""}>${m}</option>`).join("")}</select></div>
+      <div><div class="field-label">Note</div><input type="text" id="rf-note" value="${esc(r.note)}" /></div>
+    </div>
+    <div class="flex gap-10" style="justify-content:flex-end;margin-top:22px;">
+      <button onclick="closeModal()" class="btn btn-ghost">Cancel</button>
+      <button class="btn btn-yellow" onclick="saveRecord('${id}')">Save Changes</button>
+    </div>
+  `,
+        );
+      }
+      function saveRecord(id) {
+        const i = records.findIndex((r) => r.id === id);
+        if (i < 0) return;
+        records[i] = {
+          ...records[i],
+          status: document.getElementById("rf-status").value,
+          time: document.getElementById("rf-time").value,
+          method: document.getElementById("rf-method").value,
+          note: document.getElementById("rf-note").value,
+        };
+        closeModal();
+        updateSidebarInfo();
+        renderPage("records");
+        showToast("success", "Record updated");
+      }
+      function deleteRecord(id) {
+        if (!confirm("Delete this record?")) return;
+        records = records.filter((r) => r.id !== id);
+        updateSidebarInfo();
+        renderPage("records");
+        showToast("warn", "Record deleted");
+      }
+
+      // ─── REPORTS ─────────────────────────────────────────────────────────────────
+      let reportCourseId = "",
+        reportFrom = "2025-01-01",
+        reportTo = "2025-12-31";
+      function renderReports() {
+        if (!reportCourseId && courses.length) reportCourseId = courses[0].id;
+        const course = courses.find((c) => c.id === reportCourseId);
+        const filtSessions = sessions.filter(
+          (s) =>
+            s.courseId === reportCourseId &&
+            s.date >= reportFrom &&
+            s.date <= reportTo,
+        );
+        const filtRecs = records.filter((r) =>
+          filtSessions.some((s) => s.id === r.sessionId),
+        );
+        const totalSessions = filtSessions.length;
+
+        const studentReport = students
+          .map((s) => {
+            const sRecs = filtRecs.filter((r) => r.studentId === s.id);
+            const pres = sRecs.filter((r) => r.status === "present").length;
+            const late = sRecs.filter((r) => r.status === "late").length;
+            const abs = sRecs.filter((r) => r.status === "absent").length;
+            const exc = sRecs.filter((r) => r.status === "excused").length;
+            const pct =
+              totalSessions > 0
+                ? Math.round(((pres + late) / totalSessions) * 100)
+                : 0;
+            return {
+              ...s,
+              present: pres,
+              late,
+              absent: abs,
+              excused: exc,
+              pct,
+              total: sRecs.length,
+            };
+          })
+          .filter((s) => s.total > 0 || totalSessions > 0);
+
+        const oPresent = filtRecs.filter((r) => r.status === "present").length;
+        const oLate = filtRecs.filter((r) => r.status === "late").length;
+        const oAbsent = filtRecs.filter((r) => r.status === "absent").length;
+        const oTotal = filtRecs.length;
+        const oRate =
+          oTotal > 0 ? Math.round(((oPresent + oLate) / oTotal) * 100) : 0;
+
+        const stats = [
+          {
+            label: "Sessions",
+            value: totalSessions,
+            icon: "📅",
+            color: "#5b8dee",
+          },
+          { label: "Present", value: oPresent, icon: "✅", color: "#3ecf8e" },
+          { label: "Late", value: oLate, icon: "⏰", color: "#f5c842" },
+          { label: "Absent", value: oAbsent, icon: "❌", color: "#f06a6a" },
+          {
+            label: "Overall Rate",
+            value: `${oRate}%`,
+            icon: "📊",
+            color: oRate >= 75 ? "#3ecf8e" : "#f06a6a",
+          },
+        ]
+          .map(
+            (s) =>
+              `<div class="stat"><div class="stat-glow" style="background:${s.color};"></div><div class="stat-label">${s.label}</div><div class="stat-value" style="color:${s.color};">${s.value}</div><div class="stat-icon">${s.icon}</div></div>`,
+          )
+          .join("");
+
+        let barChart = "";
+        if (filtSessions.length > 0) {
+          const bars = filtSessions
+            .map((sess) => {
+              const sRecs = records.filter((r) => r.sessionId === sess.id);
+              const sp = sRecs.filter((r) => r.status === "present").length;
+              const sl = sRecs.filter((r) => r.status === "late").length;
+              const sa = sRecs.filter((r) => r.status === "absent").length;
+              const tot = sp + sl + sa || 1;
+              return `<div class="bar-group">
+        <div class="bar-stack">
+          <div style="width:100%;height:${Math.round((sp / tot) * 90)}px;background:#3ecf8e;" title="Present: ${sp}"></div>
+          <div style="width:100%;height:${Math.round((sl / tot) * 90)}px;background:#f5c842;" title="Late: ${sl}"></div>
+          <div style="width:100%;height:${Math.round((sa / tot) * 90)}px;background:#f06a6a;" title="Absent: ${sa}"></div>
+        </div>
+        <div class="bar-date">${sess.date.slice(5)}</div>
+      </div>`;
+            })
+            .join("");
+          barChart = `<div class="card mb-16">
+      <div style="font-weight:600;font-size:13px;margin-bottom:16px;">Session Breakdown</div>
+      <div class="bar-chart">${bars}</div>
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#3ecf8e;"></div>Present</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f5c842;"></div>Late</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#f06a6a;"></div>Absent</div>
+      </div>
+    </div>`;
+        }
+
+        const tableRows = studentReport
+          .map((s) => {
+            const col = attendColor(s.pct);
+            const statusLabel =
+              s.pct >= 75
+                ? "✅ Good"
+                : s.pct >= 50
+                  ? "⚠️ Warning"
+                  : "❌ At Risk";
+            const statusColor =
+              s.pct >= 75 ? "#3ecf8e" : s.pct >= 50 ? "#f5c842" : "#f06a6a";
+            return `<tr>
+      <td><div class="flex gap-8" style="align-items:center;">${avatar(s.photo, undefined, 30)}
+        <div><div style="font-size:12px;font-weight:600;">${esc(s.name)}</div>
+        <div style="font-size:10px;color:var(--muted);font-family:var(--mono);">${s.id}</div></div></div></td>
+      <td>${pill(s.program, programColor(s.program))}</td>
+      <td style="font-size:13px;font-weight:600;color:#3ecf8e;">${s.present}</td>
+      <td style="font-size:13px;font-weight:600;color:#f5c842;">${s.late}</td>
+      <td style="font-size:13px;font-weight:600;color:#f06a6a;">${s.absent}</td>
+      <td style="font-size:13px;font-weight:600;color:#9d7de8;">${s.excused}</td>
+      <td>
+        <div class="flex gap-8" style="align-items:center;">
+          <div style="width:52px;height:4px;border-radius:3px;background:var(--border);overflow:hidden;">
+            <div style="width:${s.pct}%;height:100%;background:${col};"></div>
+          </div>
+          <span style="font-size:12px;font-weight:600;color:${col};">${s.pct}%</span>
+        </div>
+      </td>
+      <td><span style="font-size:11px;font-weight:600;color:${statusColor};">${statusLabel}</span></td>
+    </tr>`;
+          })
+          .join("");
+
+        return `
+    <div class="page-header mb-24">
+      <div><h1>Reports</h1><p class="subtitle">Attendance analytics by course</p></div>
+    </div>
+    <div class="card mb-20">
+      <div class="flex gap-12" style="flex-wrap:wrap;align-items:flex-end;gap:12px;">
+        <div style="flex:2;min-width:200px;">
+          <div class="field-label">Course</div>
+          <select onchange="reportCourseId=this.value;renderPage('reports')">
+            ${courses.map((c) => `<option value="${c.id}" ${c.id === reportCourseId ? "selected" : ""}>${esc(c.code)} – ${esc(c.name)}</option>`).join("")}
+          </select>
+        </div>
+        <div style="flex:1;">
+          <div class="field-label">From</div>
+          <input type="date" value="${reportFrom}" onchange="reportFrom=this.value;renderPage('reports')" />
+        </div>
+        <div style="flex:1;">
+          <div class="field-label">To</div>
+          <input type="date" value="${reportTo}" onchange="reportTo=this.value;renderPage('reports')" />
+        </div>
+      </div>
+    </div>
+    <div class="stats-grid mb-20">${stats}</div>
+    ${barChart}
+    <div class="card" style="padding:0;overflow:hidden;">
+      <table>
+        <thead><tr>${["Student", "Program", "Present", "Late", "Absent", "Excused", `Rate (/${totalSessions})`, "Status"].map((h) => `<th>${h}</th>`).join("")}</tr></thead>
+        <tbody>${tableRows || `<tr><td colspan="8">${emptyState("📊", "No data for selected filters")}</td></tr>`}</tbody>
+      </table>
+    </div>
+  `;
+      }
+
+      // ─── INIT ────────────────────────────────────────────────────────────────────
+      buildNav();
+      renderPage("dashboard");
+      updateSidebarInfo();
+    </script>
+  </body>
+</html>
